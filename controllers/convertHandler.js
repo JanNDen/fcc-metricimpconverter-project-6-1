@@ -9,10 +9,10 @@
 function ConvertHandler() {
   this.getNum = function (input) {
     const allNumbers = this.splitNumberAndUnit(input).initNumber.split("/");
-    const areValidNumbers = allNumbers.reduce(
-      (res, val) => res && !isNaN(val),
-      true
-    );
+    let areValidNumbers = true;
+    allNumbers.forEach(function (ele) {
+      if (isNaN(ele) || ele == "") areValidNumbers = false;
+    });
     if (areValidNumbers) return allNumbers.reduce((acc, val) => acc / val);
     else return undefined;
   };
@@ -22,17 +22,11 @@ function ConvertHandler() {
   };
 
   this.getReturnUnit = function (initUnit) {
-    const units = {
-      liquids: ["gal", "L"],
-      weights: ["lbs", "kg"],
-      distances: ["mi", "km"],
-    };
-    for (type in units) {
-      if (units[type].indexOf(initUnit) >= 0) {
-        const switchedIndex = 1 - units[type].indexOf(initUnit);
-        return units[type][switchedIndex];
-      }
-    }
+    const original = ["gal", "L", "mi", "km", "lbs", "kg"];
+    const converted = ["L", "gal", "km", "mi", "kg", "lbs"];
+    const correctIndex = original.indexOf(initUnit);
+    if (correctIndex >= 0) return converted[correctIndex];
+    else return undefined;
   };
 
   this.spellOutUnit = function (unit) {
@@ -56,8 +50,9 @@ function ConvertHandler() {
       mi: 1.60934,
       km: 1 / 1.60934,
     };
+    console.log(initNum, initUnit);
     const calculation = initNum * unitCaltulations[initUnit];
-    return parseFloat(calculation).toFixed(5);
+    return parseFloat(parseFloat(calculation).toFixed(5));
   };
 
   this.getString = function (initNum, initUnit, returnNum, returnUnit) {
