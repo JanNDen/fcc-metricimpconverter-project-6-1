@@ -29,15 +29,26 @@ module.exports = function (app) {
 
     // Validate numbers and units
     // If they are undefined, it means they failed tests in convertHandler.js
-    if (!initNum && !initUnit) {
+    if (!initNum && (!initUnit || !returnUnit)) {
+      console.log(input, "invalid number and unit");
       res.send("invalid number and unit");
     } else if (!initNum) {
+      console.log(input, "invalid number");
       res.send("invalid number");
-    } else if (!initUnit) {
+    } else if (!initUnit || !returnUnit) {
+      console.log(input, "invalid unit");
       res.send("invalid unit");
+    } else {
+      // Return the output
+      const output = {
+        initNum,
+        initUnit,
+        returnNum,
+        returnUnit,
+        string: toString,
+      };
+      console.log(input, output);
+      res.json(output);
     }
-
-    // Return the output
-    res.json({ initNum, initUnit, returnNum, returnUnit, string: toString });
   });
 };

@@ -8,9 +8,13 @@
 
 function ConvertHandler() {
   this.getNum = function (input) {
-    return this.splitNumberAndUnit(input)
-      .initNumber.split("/")
-      .reduce((acc, num) => acc / this.numberChecker(num));
+    const allNumbers = this.splitNumberAndUnit(input).initNumber.split("/");
+    const areValidNumbers = allNumbers.reduce(
+      (res, val) => res && !isNaN(val),
+      true
+    );
+    if (areValidNumbers) return allNumbers.reduce((acc, val) => acc / val);
+    else return undefined;
   };
 
   this.getUnit = function (input) {
@@ -53,7 +57,6 @@ function ConvertHandler() {
       km: 1 / 1.60934,
     };
     const calculation = initNum * unitCaltulations[initUnit];
-    console.log(initUnit, unitCaltulations[initUnit]);
     return parseFloat(calculation).toFixed(5);
   };
 
@@ -72,22 +75,20 @@ function ConvertHandler() {
     // Helper function that returns an object with separated number and unit
 
     //return input.match(/(?<initNumber>[.0-9\/]*)(?<initUnit>[a-zA-Z]*)/).groups;
-    const initNumber =
+    let initNumber =
       input.match(/(?<initNumber>[.0-9\/]*)(?<initUnit>[a-zA-Z]*)/).groups
         .initNumber || "1";
-    console.log(initNumber);
+    if (/\/.*\//.test(input)) initNumber = ""; // We accept only one backslash in the number
     let initUnit = input
       .match(/(?<initNumber>[.0-9\/]*)(?<initUnit>[a-zA-Z]*)/)
       .groups.initUnit.toLowerCase();
-    if (initUnit == "l") initUnit = "L";
+    if (initUnit == "l") initUnit = "L"; // only liters has capital abbreviation
     return { initNumber, initUnit };
   };
 
   this.numberChecker = function (input) {
     // Check whether we have a real number
-    // Especially important here to check the number of dots
-    if (isNaN(input)) return undefined;
-    else return input;
+    return !isNaN(input);
   };
 }
 
