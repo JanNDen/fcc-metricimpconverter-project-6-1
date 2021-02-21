@@ -20,8 +20,8 @@ function ConvertHandler() {
   this.getReturnUnit = function (initUnit) {
     const units = {
       liquids: ["gal", "L"],
-      weights: ["lbs", "Kg"],
-      distances: ["mi", "Km"],
+      weights: ["lbs", "kg"],
+      distances: ["mi", "km"],
     };
     for (type in units) {
       if (units[type].indexOf(initUnit) >= 0) {
@@ -36,9 +36,9 @@ function ConvertHandler() {
       gal: "gallons",
       L: "litres",
       lbs: "pounds",
-      Kg: "kilograms",
+      kg: "kilograms",
       mi: "miles",
-      Km: "kilometers",
+      km: "kilometers",
     };
     return unitSpelling[unit];
   };
@@ -48,11 +48,12 @@ function ConvertHandler() {
       gal: 3.78541,
       L: 1 / 3.78541,
       lbs: 0.453592,
-      Kg: 1 / 0.453592,
+      kg: 1 / 0.453592,
       mi: 1.60934,
-      Km: 1 / 1.60934,
+      km: 1 / 1.60934,
     };
     const calculation = initNum * unitCaltulations[initUnit];
+    console.log(initUnit, unitCaltulations[initUnit]);
     return parseFloat(calculation).toFixed(5);
   };
 
@@ -69,7 +70,17 @@ function ConvertHandler() {
 
   this.splitNumberAndUnit = function (input) {
     // Helper function that returns an object with separated number and unit
-    return input.match(/(?<initNumber>[.0-9\/]*)(?<initUnit>[a-zA-Z]*)/).groups;
+
+    //return input.match(/(?<initNumber>[.0-9\/]*)(?<initUnit>[a-zA-Z]*)/).groups;
+    const initNumber =
+      input.match(/(?<initNumber>[.0-9\/]*)(?<initUnit>[a-zA-Z]*)/).groups
+        .initNumber || "1";
+    console.log(initNumber);
+    let initUnit = input
+      .match(/(?<initNumber>[.0-9\/]*)(?<initUnit>[a-zA-Z]*)/)
+      .groups.initUnit.toLowerCase();
+    if (initUnit == "l") initUnit = "L";
+    return { initNumber, initUnit };
   };
 
   this.numberChecker = function (input) {
